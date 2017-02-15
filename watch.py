@@ -13,10 +13,22 @@ def check(dirname):
             for i in ls:
                 if os.path.isfile(os.path.join(dirname,i)):
                     print i, 'found!'
-                    subprocess.call(['ffmpeg', '-i', i]) # placeholder, so insert anything else but this
-                    shutil.move(os.path.join(dirname, i), os.path.join(dirname, 'completed'))
-        time.sleep(10)
+                    statinfo = os.stat(os.path.join(dirname, i))
+                    size = statinfo.st_size
+                    time.sleep(10)
+                    statinfo = os.stat(os.path.join(dirname, i))
+                    while statinfo.st_size > size:
+                        print 'checking if file is still transferring'
+                        size = statinfo.st_size
+                        time.sleep(10)
+                        statinfo = os.stat(os.path.join(dirname, i))
 
+                    subprocess.call(['ffmpeg', '-i', os.path.join(dirname,i)])
+                    try:
+                        shutil.move(os.path.join(dirname, i), os.path.join(dirname, 'completed'))
+                    except shutil.Error:
+                        shutil.move(os.path.join(dirname, i), os.path.join(dirname, 'completed/_%s_' % i))
+        time.sleep(10)
 
 def main():
     try:
@@ -24,7 +36,5 @@ def main():
     except:
         OSError
     check(sys.argv[1])
-
-
 if __name__ == '__main__':
     main()
