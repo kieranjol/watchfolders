@@ -13,9 +13,10 @@ def check(dirname):
             for i in ls:
                 if os.path.isfile(os.path.join(dirname,i)):
                     print i, 'found!'
-                    subprocess.call(['ffmpeg', '-i', i])
+                    subprocess.call(['ffmpeg', '-i', i]) # placeholder, so insert anything else but this
                     shutil.move(os.path.join(dirname, i), os.path.join(dirname, 'completed'))
         time.sleep(10)
+
 
 def main():
     try:
@@ -23,5 +24,7 @@ def main():
     except:
         OSError
     check(sys.argv[1])
+
+
 if __name__ == '__main__':
     main()
